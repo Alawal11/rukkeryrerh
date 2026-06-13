@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Special Surprise for Priya</title>
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a051d, #0c020e);
+      color: #fbe5ff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Background Floating Hearts Animation */
+    .bg-hearts {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .heart {
+      position: absolute;
+      color: rgba(236, 72, 153, 0.25);
+      bottom: -10%;
+      animation: floatUp 6s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% {
+        transform: translateY(-115vh) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* Screen Transitions & Layout */
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 10;
+      box-sizing: border-box;
+    }
+
+    .step-screen {
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+      width: 100%;
+    }
+
+    .step-screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Shared Layout Components */
+    .flex-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .flex-row {
+        flex-direction: column;
+        gap: 30px;
+      }
+    }
+
+    /* Photo Frame Styling */
+    .photo-frame {
+      background: linear-gradient(45deg, #ec4899, #8b5cf6);
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: rotate(-3deg);
+      transition: transform 0.3s ease;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .photo-frame:hover {
+      transform: rotate(0deg);
+    }
+
+    .photo-container {
+      background-color: #18181b;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .photo-container.aspect-letter {
+      aspect-ratio: 3 / 4;
+    }
+
+    .photo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-caption {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+    }
+
+    /* Card Panels */
+    .card {
+      background: rgba(36, 11, 42, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .card.letter-card {
+      max-width: 550px;
+      text-align: left;
+    }
+
+    .lock-circle {
+      width: 48px;
+      height: 48px;
+      background: rgba(236, 72, 153, 0.1);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 20px;
+    }
+
+    h2, h3 {
+      margin: 0 0 4px 0;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      color: #a1a1aa;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    /* Inputs and Buttons */
+    input[type="password"] {
+      width: 100%;
+      background: #16041b;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 20px;
+      color: white;
+      letter-spacing: 6px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="password"]:focus {
+      border-color: #ec4899;
+    }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 12px;
+      margin: 8px 0;
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      background: linear-gradient(90deg, #ec4899, #8b5cf6);
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      color: white;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.2);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Step 2 Specifics (Cake Screen) */
+    .cake-screen {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cake-title {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(to right, #f472b6, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Cake UI Component CSS */
+    .cake-wrapper {
+      position: relative;
+      margin: 60px 0 40px;
+      transform: scale(1.25);
+    }
+
+    .candle-stick {
+      width: 8px;
+      height: 32px;
+      background: #f472b6;
+      margin: 0 auto;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .candle-flame {
+      width: 12px;
+      height: 24px;
+      background: #fb923c;
+      border-radius: 50%;
+      filter: blur(1px);
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 20px #f97316;
+      animation: flicker 0.6s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1); }
+      100% { transform: translateX(-50%) scale(1.15); }
+    }
+
+    .cake-top {
+      width: 112px;
+      height: 40px;
+      background: #a855f7;
+      border-radius: 8px 8px 0 0;
+      border-bottom: 4px solid #9333ea;
+      position: relative;
+    }
+
+    .cake-top::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 12px;
+      background: rgba(247, 182, 212, 0.6);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .cake-bottom {
+      width: 144px;
+      height: 48px;
+      background: #7e22ce;
+      border-radius: 6px 6px 0 0;
+      border-bottom: 4px solid #581c87;
+      position: relative;
+    }
+
+    .cake-bottom::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 12px;
+      background: rgba(244, 114, 182, 0.4);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(90deg, #fb923c, #ec4899);
+    }
+
+    .btn-disabled {
+      background: #3f3f46;
+      color: #a1a1aa;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Step 3 Specifics (Letter Screen) */
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      font-size: 12px;
+      background: rgba(236, 72, 153, 0.2);
+      border: 1px solid rgba(236, 72, 153, 0.4);
+      color: #f472b6;
+      padding: 4px 12px;
+      border-radius: 9999px;
+    }
+
+    .letter-body {
+      color: #d4d4d8;
+      font-size: 15px;
+      line-height: 1.7;
+      font-weight: 300;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    /* Custom Scrollbar */
+    .letter-body::-webkit-scrollbar { width: 5px; }
+    .letter-body::-webkit-scrollbar-track { background: rgba(36, 11, 42, 0.4); border-radius: 10px; }
+    .letter-body::-webkit-scrollbar-thumb { background: rgba(236, 72, 153, 0.3); border-radius: 10px; }
+
+    .letter-body p { margin: 0 0 16px 0; }
+    .letter-body .salutation { font-weight: 600; color: #fbcfe8; font-size: 18px; }
+    .letter-body .signature { text-align: right; font-style: italic; color: #f472b6; font-family: Georgia, serif; }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: #a1a1aa;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 24px;
+      padding: 0;
+    }
+    .back-btn:hover { color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Hearts Background Container -->
+  <div class="bg-hearts" id="heartsContainer"></div>
+
+  <div class="container">
+    
+    <!-- STEP 1: Passcode Screen -->
+    <div id="step1" class="step-screen active flex-row">
+      <div class="photo-frame">
+        <div class="photo-container">
+          <!-- Replace source string with your image asset path -->
+          <img src="r" alt="Priya Birthday">
+          <div class="photo-caption">Celebrating original smile... ✨</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lock-circle">🔒</div>
+        <h2>A Special Surprise Awaits</h2>
+        <div class="subtitle">Enter the Secret Birthday Code</div>
+        <input type="password" id="passcode" placeholder="dd/mm" maxlength="5">
+        <div id="errorMsg" class="error-msg">Wrong Password! Code: '26/06' ✨</div>
+        <button class="btn" style="margin-top: 12px;" onclick="checkPasscode()">Unlock Surprise 🎁</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Cake Screen -->
+    <div id="step2" class="step-screen cake-screen">
+      <h1 class="cake-title">🎂 Happy Birthday wini 🎂</h1>
+      <div style="color: #a1a1aa; font-size: 14px;">May all your dreams come true! 💖</div>
+
+      <div class="cake-wrapper">
+        <div id="flame" class="candle-flame"></div>
+        <div class="candle-stick"></div>
+        <div class="cake-top"></div>
+        <div class="cake-bottom"></div>
+      </div>
+
+      <div class="btn-group">
+        <button id="blowBtn" class="btn btn-secondary" onclick="blowCandle()">Blow The Candle 180°C 🕯️</button>
+        <button id="noteBtn" class="btn" style="display: none;" onclick="goToStep(3)">Open My Special Note 💌</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Letter Screen -->
+    <div id="step3" class="step-screen flex-row">
+      <div class="photo-frame" style="transform: rotate(2deg);">
+        <div class="photo-container aspect-letter">
+          <!-- Replace source string with your second image asset path -->
+          <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=600" alt="Priya Smile">
+        </div>
+        <div style="text-center: center; margin-top: 12px; font-size: 14px; text-align:center;">
+          Every day with you is a gift 💫
+        </div>
+      </div>
+
+      <div class="card letter-card">
+        <div class="letter-header">
+          <h3>A Special Message</h3>
+          <span class="badge">♥ Just For You</span>
+        </div>
+        <div class="letter-body">
+          <p class="salutation">Dear Priya,</p>
+          <p>Today is one of my favorite days of the year — the day you came into this world and made it infinitely more beautiful.</p>
+          <p>I hope your life continues to overflow with happiness, success, and all the little moments that make your heart smile.</p>
+          <p>May every dream you have ever cherished slowly become your reality, and may you always know just how deeply loved you are.</p>
+          <p style="color: #fbcfe8; font-weight: 500;">Happy Birthday, with all my heart! 🎂💖</p>
+          <p class="signature">— Dev</p>
+        </div>
+        <button class="back-btn" onclick="resetCakeScreen()">◀ Back to Celebration</button>
+      </div>
+    </div>
+
+  </div>
+  <footer style="display: flex;" position: absolute; bottom: 120px; right: 12px>
+    call/whatsapp 09068622680/98121654830
+  </footer>
+
+  <script>
+    // 1. Generate Interactive Floating Hearts Background Elements
+    const heartsContainer = document.getElementById('heartsContainer');
+    const totalHearts = 20;
+
+    for (let i = 0; i < totalHearts; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'heart';
+      heart.innerText = '♥';
+      
+      // Assign randomized positional and dimensional styling
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 15 + 12) + 'px';
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      
+      heartsContainer.appendChild(heart);
+    }
+
+    // 2. Navigation Steps Engine
+    function goToStep(stepNumber) {
+      document.querySelectorAll('.step-screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById('step' + stepNumber).classList.add('active');
+    }
+
+    // 3. Step 1: Logic Verification
+    function checkPasscode() {
+      const input = document.getElementById('passcode').value;
+      const errorMsg = document.getElementById('errorMsg');
+      
+      if (input === '26/06') {
+        errorMsg.style.display = 'none';
+        goToStep(2);
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    // 4. Step 2: Blow Candle Interaction Interactivity
+    function blowCandle() {
+      document.getElementById('flame').style.display = 'none';
+      
+      const blowBtn = document.getElementById('blowBtn');
+      blowBtn.innerText = 'Wish Made 🎉';
+      blowBtn.className = 'btn btn-disabled';
+      blowBtn.disabled = true;
+
+      // Unhide the special custom letter button route
+      document.getElementById('noteBtn').style.display = 'inline-block';
+    }
+
+    // 5. Step 3: Handle Return Route state mutation resets
+    function resetCakeScreen() {
+      document.getElementById('flame').style.display = 'block';
+      
+      const blowBtn = document.getElementById('blowBtn');
+      blowBtn.innerText = 'Blow The Candle 🕯️';
+      blowBtn.className = 'btn btn-secondary';
+      blowBtn.disabled = false;
+      
+      document.getElementById('noteBtn').style.display = 'none';
+      goToStep(2);
+    }
+  </script>
+</body>
+</html>

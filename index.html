@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Premium Surprise Awaits</title>
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f051d, #05020e);
+      color: #fbe5ff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Floating Sparkles */
+    .bg-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-sparkle {
+      position: absolute;
+      color: rgba(212, 175, 55, 0.3);
+      bottom: -10%;
+      animation: floatUp 7s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-115vh) rotate(360deg) scale(1.3); opacity: 0; }
+    }
+
+    /* Core Layout & Dynamic Router Engine */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 10;
+      box-sizing: border-box;
+    }
+
+    .page-view {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+
+    .page-view.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .flex-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .flex-row { flex-direction: column; gap: 30px; }
+    }
+
+    /* Luxury Card & Photo Frame UI */
+    .card {
+      background: rgba(20, 10, 30, 0.85);
+      backdrop-filter: blur(16px);
+      padding: 40px;
+      border-radius: 28px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .card.wide-card {
+      max-width: 600px;
+      text-align: left;
+    }
+
+    .photo-frame {
+      background: linear-gradient(45deg, #d4af37, #aa7c11);
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      transform: rotate(-3deg);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .photo-frame:hover { transform: rotate(0deg) scale(1.03); }
+
+    .photo-container {
+      background-color: #121214;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .photo-container img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Interactive Inputs & Typography */
+    h1, h2, h3 { margin: 0; font-weight: 700; color: #fff; }
+    
+    .gold-text {
+      background: linear-gradient(to right, #d4af37, #f3e5ab, #aa7c11);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle { color: #a1a1aa; font-size: 14px; margin-bottom: 30px; }
+
+    input[type="password"] {
+      width: 100%;
+      background: #090312;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 4px;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input[type="password"]:focus {
+      border-color: #d4af37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+
+    .error-msg { color: #f87171; font-size: 13px; margin: 12px 0 0 0; display: none; }
+
+    .btn {
+      background: linear-gradient(90deg, #d4af37, #aa7c11);
+      border: none;
+      border-radius: 14px;
+      padding: 16px 32px;
+      color: #0f051d;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px -3px rgba(212, 175, 55, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .full-width { width: 100%; margin-top: 20px; }
+
+    /* Interactive Cake Room Elements */
+    .cake-wrapper {
+      position: relative;
+      margin: 70px 0 40px;
+      transform: scale(1.4);
+    }
+
+    .candle-stick {
+      width: 10px;
+      height: 36px;
+      background: linear-gradient(to right, #d4af37, #aa7c11);
+      margin: 0 auto;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .candle-flame {
+      width: 14px;
+      height: 26px;
+      background: #ff9d23;
+      border-radius: 50% 50% 20% 20%;
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 25px #ff6b00;
+      animation: flicker 0.5s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1) rotate(-1deg); }
+      100% { transform: translateX(-50%) scale(1.15) rotate(1deg); }
+    }
+
+    .cake-top {
+      width: 130px;
+      height: 45px;
+      background: #250938;
+      border-radius: 10px 10px 0 0;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+    }
+
+    .cake-bottom {
+      width: 170px;
+      height: 55px;
+      background: #190526;
+      border-radius: 8px 8px 0 0;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    /* Scrapbook Gallery Grid Layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 40px 0;
+    }
+
+    .memory-card {
+      background: rgba(25, 10, 35, 0.6);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .memory-card:hover { transform: translateY(-8px); border-color: #d4af37; }
+    
+    .img-wrapper { width: 100%; aspect-ratio: 4 / 5; overflow: hidden; background: #11051c; }
+    .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card-meta { padding: 16px; text-align: center; font-size: 14px; background: rgba(15, 5, 22, 0.9); }
+
+    /* Letter Room Layout Elements */
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      padding-bottom: 16px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: #d4af37;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+    }
+
+    .letter-body { color: #e4e4e7; font-size: 16px; line-height: 1.8; font-weight: 300; }
+    .letter-body p { margin: 0 0 20px 0; }
+    .letter-body .signature { text-align: right; font-style: italic; color: #d4af37; font-family: Georgia, serif; font-size: 18px; margin-top: 30px; }
+
+    .action-row { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; width: 100%; }
+    .back-link { color: #a1a1aa; text-decoration: none; font-size: 14px; cursor: pointer; }
+    .back-link:hover { color: #d4af37; }
+  </style>
+</head>
+<body>
+
+  <audio id="ambientMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <div class="bg-elements" id="sparkleContainer"></div>
+
+  <div class="container">
+
+    <div id="page1" class="page-view active">
+      <div class="flex-row">
+        <div class="photo-frame">
+          <div class="photo-container">
+            <img src="rukayatu.png" alt="Celebration Decor">
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+          <h2>A Royal Invitation</h2>
+          <div class="subtitle">Unlock using the secret date key (DD/MM)</div>
+          <input type="password" id="passcode" placeholder="00/00" maxlength="5">
+          <div id="errorMsg" class="error-msg">The vault remains sealed. Try again ✨</div>
+          <button class="btn full-width" onclick="verifyPasscode()">Unlock Experience 🎁</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="page2" class="page-view">
+      <h1 class="cake-title gold-text" style="font-size: 42px; text-align: center; margin-bottom: 10px;">🎂 Happy Birthday, winifred! 🎂</h1>
+      <div style="color: #d4af37; letter-spacing: 1px; font-size: 16px; text-align: center;">Blow out the flame to unlock your surprise vault</div>
+
+      <div class="cake-wrapper">
+        <div id="flame" class="candle-flame"></div>
+        <div class="candle-stick"></div>
+        <div class="cake-top"></div>
+        <div class="cake-bottom"></div>
+      </div>
+
+      <div style="text-align: center; max-width: 400px;">
+        <button id="actionBtn" class="btn" onclick="triggerBlow()">Blow Out Candle 🕯️</button>
+        <p id="hintText" class="subtitle" style="margin-top: 15px;">Tip: Grant microphone permissions to blow into your mic, or simply tap the button!</p>
+      </div>
+    </div>
+
+    <div id="page3" class="page-view">
+      <div style="text-align: center; max-width: 600px;">
+        <h1 class="gold-text" style="font-size: 36px;">✨ The Memory Scrapbook ✨</h1>
+        <p style="color: #a1a1aa; margin: 8px 0 0 0;">A snapshot collection of beautiful chapters and unforgettable highlights.</p>
+      </div>
+
+      <div class="grid-container">
+        <div class="memory-card">
+          <div class="img-wrapper"><img src="rukky3.png" alt="Memory 1"></div>
+          <div class="card-meta">The radiant smile that brightens any room 💫</div>
+        </div>
+        <div class="memory-card">
+          <div class="img-wrapper"><img src="rukkkk.png" alt="Memory 2"></div>
+          <div class="card-meta">Celebrating every milestone along the way ✨</div>
+        </div>
+        <div class="memory-card">
+          <div class="img-wrapper"><img src="rukayatu.png" alt="Memory 3"></div>
+          <div class="card-meta">To more adventures and shared laughs 🌌</div>
+        </div>
+      </div>
+
+      <button class="btn" onclick="navigateTo(4)">Read Your Letter 💌</button>
+    </div>
+
+    <div id="page4" class="page-view">
+      <div class="card wide-card">
+        <div class="letter-header">
+          <h3>A Deeply Personal Note</h3>
+          <span class="badge">♥ Private Vault</span>
+        </div>
+        <div class="letter-body">
+          <p style="font-weight: 600; color: #fff; font-size: 19px;">Dear Priya,</p>
+          <p>Today is one of my favorite days of the year — the day you came into this world and made it infinitely more beautiful.</p>
+          <p>I hope your life continues to overflow with happiness, success, and all the little moments that make your heart smile.</p>
+          <p>May every dream you have ever cherished slowly become your reality, and may you always know just how deeply appreciated you are.</p>
+          <p style="color: #fff; font-weight: 500;">Happy Birthday, with all my heart! 🎂👑</p>
+          <div class="signature">— Dev</div>
+        </div>
+        <div class="action-row">
+          <span class="back-link" onclick="navigateTo(3)">◀ Back to Gallery</span>
+          <button id="musicBtn" class="btn" style="padding: 8px 16px; font-size: 12px;" onclick="toggleAudio()">Play Ambient Music 🎵</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Dynamic Application Router Engine
+    let unlockedState = false;
+    let candleBlownState = false;
+
+    function navigateTo(pageNumber) {
+      // Dynamic state check route protection rules
+      if (pageNumber > 1 && !unlockedState) {
+        pageNumber = 1;
+      }
+      if (pageNumber > 2 && !candleBlownState) {
+        pageNumber = 2;
+      }
+
+      document.querySelectorAll('.page-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      document.getElementById('page' + pageNumber).classList.add('active');
+    }
+
+    // Background Decorative Particle Generation
+    const sparkleContainer = document.getElementById('sparkleContainer');
+    for (let i = 0; i < 15; i++) {
+      const particle = document.createElement('span');
+      particle.className = 'floating-sparkle';
+      particle.innerText = Math.random() > 0.5 ? '✨' : '✧';
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.fontSize = (Math.random() * 14 + 10) + 'px';
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
+      sparkleContainer.appendChild(particle);
+    }
+
+    // Lock Verification Core Controller
+    function verifyPasscode() {
+      const val = document.getElementById('passcode').value;
+      if (val === '26/06') {
+        unlockedState = true;
+        navigateTo(2);
+        initMicrophoneAnalysis();
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
+
+    // Audio Capture Node Microphone Core Integration
+    function initMicrophoneAnalysis() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const analyser = audioCtx.createAnalyser();
+          const source = audioCtx.createMediaStreamSource(stream);
+          source.connect(analyser);
+          analyser.fftSize = 256;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+
+          function detectBlow() {
+            if (candleBlownState) return;
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) { sum += dataArray[i]; }
+            let average = sum / bufferLength;
+            
+            if (average > 65) { 
+              triggerBlow();
+            }
+            requestAnimationFrame(detectBlow);
+          }
+          detectBlow();
+        }).catch(err => console.log("Microphone access declined or unavailable."));
+      }
+    }
+
+    function triggerBlow() {
+      if (candleBlownState) return;
+      candleBlownState = true;
+      document.getElementById('flame').style.display = 'none';
+      
+      const btn = document.getElementById('actionBtn');
+      btn.innerText = 'Proceed to Gallery ➔';
+      btn.onclick = () => { navigateTo(3); };
+      
+      document.getElementById('hintText').innerText = "The candle has been extinguished. Your surprise memory gallery is open.";
+    }
+
+    // Ambient Audio State Management
+    const audioTrack = document.getElementById('ambientMusic');
+    function toggleAudio() {
+      if (audioTrack.paused) {
+        audioTrack.play().catch(e => console.log("Playback interrupted."));
+        document.getElementById('musicBtn').innerText = "Pause Music ⏸";
+      } else {
+        audioTrack.pause();
+        document.getElementById('musicBtn').innerText = "Play Ambient Music 🎵";
+      }
+    }
+  </script>
+</body>
+</html>
